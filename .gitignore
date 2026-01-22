@@ -118,6 +118,11 @@ html_reports/
 *.swo
 
 # ---------------------------
+# TO-DO .md file
+# ---------------------------
+TODO.md
+
+# ---------------------------
 # Optional: editor/project specific (uncomment if you use them)
 # ---------------------------
 # Rope project settings
