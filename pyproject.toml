@@ -1,0 +1,26 @@
+[project]
+name = "jubarte"
+version = "0.1.0"
+description = "Through a command-line interface, the program enables users to input study topics and, using a Python algorithm, calculates future review dates for the selected content. These dates are then exported as a calendar file (.ics), allowing users to easily visualize and manage their review schedule in any compatible calendar application."
+authors = [
+    {name = "HenriqueMelo2007",email = "henriquemelo0983@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = "3.14.2"
+dependencies = [
+    "icalendar (>=6.3.2,<7.0.0)"
+]
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "black (>=26.1.0,<27.0.0)",
+    "ruff (>=0.14.13,<0.15.0)",
+    "pre-commit (>=4.5.1,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

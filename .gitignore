@@ -1,0 +1,128 @@
+# ---------------------------
+# Python
+# ---------------------------
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+*.whl
+.installed.cfg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+*.manifest
+*.spec
+
+# ---------------------------
+# Virtual environments & env files
+# ---------------------------
+# Common venv names
+.venv/
+venv/
+ENV/
+env/
+.env
+.env.local
+.env.*.local
+
+# pyenv
+.python-version
+
+# ---------------------------
+# Testing / coverage / caches
+# ---------------------------
+.pytest_cache/
+.cache/
+nosetests.xml
+coverage.xml
+.coverage
+.coverage.*
+htmlcov/
+
+# Mypy / type checkers
+.mypy_cache/
+.pyre/
+.pytype/
+
+# pipenv
+Pipfile.lock
+
+# ---------------------------
+# IDEs / Editors
+# ---------------------------
+# VS Code
+.vscode/
+
+# JetBrains (PyCharm, IntelliJ)
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Emacs
+*~
+\.#*
+
+# VS Code workspace storage
+.history/
+
+# ---------------------------
+# Jupyter / notebooks
+# ---------------------------
+.ipynb_checkpoints
+
+# ---------------------------
+# OS generated files
+# ---------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------------------
+# Logs & local runtime files
+# ---------------------------
+*.log
+*.pid
+*.seed
+*.pid.lock
+*.sqlite3
+
+# ---------------------------
+# Build / docs
+# ---------------------------
+# Sphinx build
+docs/_build/
+
+# Coverage / reports
+reports/
+html_reports/
+
+# ---------------------------
+# Misc / temporary
+# ---------------------------
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# ---------------------------
+# Optional: editor/project specific (uncomment if you use them)
+# ---------------------------
+# Rope project settings
+# .ropeproject/
+
+# Local secrets / credentials -- keep out of VCS
+# secrets.json
+# credentials.json
