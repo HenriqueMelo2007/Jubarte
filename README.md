@@ -30,6 +30,10 @@ This presentation covers the interactive mode use of the program.
 
 This presentation covers the installation of the program.
 
+## 👟HOW TO CLONE AND RUN
+
+This presentation covers cloning and running the program.
+
 ## 🐞HOW TO CONTRIBUTE
 
 ```python
