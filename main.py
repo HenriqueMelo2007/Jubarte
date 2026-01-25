@@ -1,1 +1,4 @@
-print("Hello, world!")
+from jubarte.cli import main
+
+if __name__ == "__main__":
+    main()
