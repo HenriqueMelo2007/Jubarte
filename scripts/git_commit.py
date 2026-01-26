@@ -2,23 +2,39 @@ import subprocess
 import sys
 
 
-def run(cmd: list[str]):
+def run(cmd: list[str], allow_fail: bool = False) -> int:
     print(f"\n▶ {' '.join(cmd)}")
-    subprocess.run(cmd, check=True)
+    result = subprocess.run(cmd)
+    if result.returncode != 0 and not allow_fail:
+        raise subprocess.CalledProcessError(result.returncode, cmd)
+    return result.returncode
+
+
+def run_precommit_until_clean(max_runs: int = 3):
+    for i in range(max_runs):
+        print(f"\n🔍 pre-commit run ({i + 1}/{max_runs})")
+        code = run(["pre-commit", "run", "--all-files"], allow_fail=True)
+
+        if code == 0:
+            print("✅ pre-commit clean")
+            return
+
+    raise RuntimeError("❌ pre-commit keeps modifying files, aborting.")
 
 
 def main():
     if len(sys.argv) < 2:
-        print('Uso: python scripts/git_commit.py "type: message"')
+        print('Uso: gcommit "type: message" [--push]')
         sys.exit(1)
 
     message = sys.argv[1]
+    push = "--push" in sys.argv
 
-    run(["pre-commit", "run", "--all-files"])
+    run_precommit_until_clean()
     run(["git", "add", "."])
     run(["git", "commit", "-m", message])
 
-    if "--push" in sys.argv:
+    if push:
         run(["git", "push"])
 
 
