@@ -35,7 +35,7 @@ def build_parser():
 def main(argv=None):
     parser = build_parser()
     args = parser.parse_args(argv)
-    app = App()
+    app = App()  # injete implementações se quiser
 
     if args.cmd == "add":
         item = app.add_item(args.title, args.notes)
