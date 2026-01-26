@@ -32,3 +32,6 @@ target-version = ["py312"]
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "I"]
+
+[tool.poetry.scripts]
+jubarte = "jubarte.cli:main"
