@@ -35,3 +35,4 @@ select = ["E", "F", "I"]
 
 [tool.poetry.scripts]
 jubarte = "jubarte.cli:main"
+gcommit = "scripts.git_commit:main"
