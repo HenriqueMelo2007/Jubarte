@@ -1,9 +1,28 @@
+"""
+Command-line interface (CLI) entry point for the Jubarte application.
+
+This module defines the argument parser and the main command dispatcher,
+mapping CLI commands to application behaviors such as adding study topics,
+listing items, exporting calendars, and reviewing content.
+"""
+
 import argparse
 
 from .app import App
 
 
 def build_parser():
+    """
+    Build and configure the argument parser for the Jubarte CLI.
+
+    This function defines all supported subcommands and their arguments,
+    including commands for adding items, listing pending reviews,
+    exporting calendar files, and recording review results.
+
+    Returns:
+        argparse.ArgumentParser: A fully configured argument parser
+        for the Jubarte command-line interface.
+    """
     p = argparse.ArgumentParser(prog="jubarte")
     sub = p.add_subparsers(dest="cmd")
 
@@ -33,9 +52,20 @@ def build_parser():
 
 
 def main(argv=None):
+    """
+    Execute the Jubarte CLI application.
+
+    This function parses command-line arguments, initializes the application,
+    and dispatches execution to the appropriate command handler based on
+    the selected subcommand.
+
+    Args:
+        argv (list[str] | None, optional): A list of command-line arguments.
+        If None, arguments are read directly from sys.argv.
+    """
     parser = build_parser()
     args = parser.parse_args(argv)
-    app = App()  # injete implementações se quiser
+    app = App()
 
     if args.cmd == "add":
         item = app.add_item(args.title, args.notes)
