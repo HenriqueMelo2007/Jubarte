@@ -33,6 +33,9 @@ target-version = ["py312"]
 line-length = 88
 select = ["E", "F", "I"]
 
+[tool.ruff.lint]
+ignore = ["E501"]
+
 [tool.poetry.scripts]
 jubarte = "jubarte.cli:main"
 gcommit = "scripts.git_commit:main"
