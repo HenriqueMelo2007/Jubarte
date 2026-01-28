@@ -1,7 +1,29 @@
+"""
+Interactive command-line loop for the Jubarte application.
+
+This module provides a simple REPL (Read–Eval–Print Loop) that allows
+users to interact with the application without restarting the program.
+Supported commands include adding items, listing reviews, recording
+review results, exporting calendars, and exiting the session.
+"""
+
 from typing import List
 
 
 def interactive_loop(app) -> None:
+    """
+    Run the interactive (REPL) mode of the Jubarte application.
+
+    This function continuously reads user input from the terminal,
+    parses commands, and delegates actions to the provided application
+    instance. The loop exits when the user types `exit` or triggers
+    an interrupt signal (Ctrl+C / Ctrl+D).
+
+    Args:
+        app: An application instance that implements the core Jubarte
+        operations such as adding items, listing reviews, exporting
+        calendar files, and recording review results.
+    """
     print("Jubarte — modo interativo. Digite 'help' para comandos.")
     while True:
         try:
@@ -11,9 +33,9 @@ def interactive_loop(app) -> None:
             break
         if not line:
             continue
-        parts: List[str] = line.split()
-        cmd = parts[0]
-        args = parts[1:]
+        user_input: List[str] = line.split()
+        cmd = user_input[0]
+        args = user_input[1:]
 
         if cmd == "help":
             print(
