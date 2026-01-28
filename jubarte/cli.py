@@ -1,7 +1,7 @@
 """
 Command-line interface (CLI) entry point for the Jubarte application.
 
-This module defines the argument parser and the main command dispatcher,
+This module defines the argument jubarte_parser and the main command dispatcher,
 mapping CLI commands to application behaviors such as adding study topics,
 listing items, exporting calendars, and reviewing content.
 """
@@ -13,42 +13,42 @@ from .app import App
 
 def build_parser():
     """
-    Build and configure the argument parser for the Jubarte CLI.
+    Build and configure the argument jubarte_parser for the Jubarte CLI.
 
     This function defines all supported subcommands and their arguments,
     including commands for adding items, listing pending reviews,
     exporting calendar files, and recording review results.
 
     Returns:
-        argparse.ArgumentParser: A fully configured argument parser
+        argparse.ArgumentParser: A fully configured argument jubarte_parser
         for the Jubarte command-line interface.
     """
-    p = argparse.ArgumentParser(prog="jubarte")
-    sub = p.add_subparsers(dest="cmd")
+    jubarte_parser = argparse.ArgumentParser(prog="jubarte")
+    sub_parsers = jubarte_parser.add_subparsers(dest="cmd")
 
-    add = sub.add_parser("add", help="Adicionar novo tópico")
+    add = sub_parsers.add_parser("add", help="Adicionar novo tópico")
     add.add_argument("title")
     add.add_argument("--notes", "-n", default="")
 
-    sub.add_parser("interactive", help="Modo interativo (REPL)")
+    sub_parsers.add_parser("interactive", help="Modo interativo (REPL)")
 
-    exp = sub.add_parser("export", help="Exportar .ics")
+    exp = sub_parsers.add_parser("export", help="Exportar .ics")
     exp.add_argument("output", help="arquivo.ics")
 
-    list_p = sub.add_parser("list", help="Listar itens")
+    list_p = sub_parsers.add_parser("list", help="Listar itens")
     list_p.add_argument(
         "--due-today", action="store_true", help="Apenas itens para hoje"
     )
 
-    review = sub.add_parser("review", help="Marcar resultado de revisão")
+    review = sub_parsers.add_parser("review", help="Marcar resultado de revisão")
     review.add_argument("item_id")
     review.add_argument(
         "--result", choices=["again", "hard", "good", "easy"], required=True
     )
 
-    sub.add_parser("version", help="Mostrar versão")
+    sub_parsers.add_parser("version", help="Mostrar versão")
 
-    return p
+    return jubarte_parser
 
 
 def main(argv=None):
@@ -63,28 +63,30 @@ def main(argv=None):
         argv (list[str] | None, optional): A list of command-line arguments.
         If None, arguments are read directly from sys.argv.
     """
-    parser = build_parser()
-    args = parser.parse_args(argv)
+    jubarte_parser = build_parser()
+    parsed_user_args = jubarte_parser.parse_args(argv)
     app = App()
 
-    if args.cmd == "add":
-        item = app.add_item(args.title, args.notes)
+    if parsed_user_args.cmd == "add":
+        item = app.add_item(parsed_user_args.title, parsed_user_args.notes)
         print(f"Adicionado: {item.id} - {item.title}")
-    elif args.cmd == "interactive":
+    elif parsed_user_args.cmd == "interactive":
         app.run_interactive()
-    elif args.cmd == "export":
-        app.export_ics(args.output)
-        print(f"Exportado: {args.output}")
-    elif args.cmd == "list":
-        items = app.list_items(due_only=args.due_today)
+    elif parsed_user_args.cmd == "export":
+        app.export_ics(parsed_user_args.output)
+        print(f"Exportado: {parsed_user_args.output}")
+    elif parsed_user_args.cmd == "list":
+        items = app.list_items(due_only=parsed_user_args.due_today)
         for it, entry in items:
             print(f"{it.id} | {it.title} | Próx: {entry.next_review.isoformat()}")
-    elif args.cmd == "review":
-        entry = app.review_item(args.item_id, args.result)
-        print(f"Revisado: {args.item_id} → próxima: {entry.next_review.isoformat()}")
-    elif args.cmd == "version":
+    elif parsed_user_args.cmd == "review":
+        entry = app.review_item(parsed_user_args.item_id, parsed_user_args.result)
+        print(
+            f"Revisado: {parsed_user_args.item_id} → próxima: {entry.next_review.isoformat()}"
+        )
+    elif parsed_user_args.cmd == "version":
         from . import __version__
 
         print(__version__)
     else:
-        parser.print_help()
+        jubarte_parser.print_help()
