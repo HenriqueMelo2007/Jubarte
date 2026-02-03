@@ -1,9 +1,16 @@
-"""
-Command-line interface (CLI) entry point for the Jubarte application.
+"""jubarte CLI
 
-This module defines the argument jubarte_parser and the main command dispatcher,
-mapping CLI commands to application behaviors such as adding study topics,
-listing items, exporting calendars, and reviewing content.
+This module provides a command-line interface for the Jubarte application.
+It exposes two helpers:
+
+- ``build_parser()`` — constructs and returns an ``argparse.ArgumentParser``
+  configured with the supported subcommands (add, interactive, export, list,
+  version).
+- ``main(argv=None)`` — program entry point that parses the provided
+  arguments, instantiates :class:`~.app.App` and dispatches the chosen
+  subcommand.
+
+The CLI is intentionally small: the heavy lifting belongs to :class:`.app.App`.
 """
 
 import argparse
@@ -12,17 +19,22 @@ from .app import App
 
 
 def build_parser():
-    """
-    Build and configure the argument jubarte_parser for the Jubarte CLI.
+    """Build and return the top-level argument parser for the Jubarte CLI.
 
-    This function defines all supported subcommands and their arguments,
-    including commands for adding items, listing pending reviews,
-    exporting calendar files, and recording review results.
+    The parser is configured with the following subcommands and arguments:
+
+    - ``add <title> [--notes|-n NOTES]``: add a new study/topic with an optional
+      notes field.
+    - ``interactive``: start the interactive REPL mode.
+    - ``export <output>``: export items to an iCalendar (``.ics``) file.
+    - ``list [--due-today]``: list stored items; ``--due-today`` limits results
+      to items due today.
+    - ``version``: print the package version and exit.
 
     Returns:
-        argparse.ArgumentParser: A fully configured argument jubarte_parser
-        for the Jubarte command-line interface.
+        argparse.ArgumentParser: a ready-to-use parser instance.
     """
+
     jubarte_parser = argparse.ArgumentParser(prog="jubarte")
     sub_parsers = jubarte_parser.add_subparsers(dest="cmd")
 
@@ -40,29 +52,35 @@ def build_parser():
         "--due-today", action="store_true", help="Apenas itens para hoje"
     )
 
-    review = sub_parsers.add_parser("review", help="Marcar resultado de revisão")
-    review.add_argument("item_id")
-    review.add_argument(
-        "--result", choices=["again", "hard", "good", "easy"], required=True
-    )
-
     sub_parsers.add_parser("version", help="Mostrar versão")
 
     return jubarte_parser
 
 
 def main(argv=None):
-    """
-    Execute the Jubarte CLI application.
+    """CLI entry point: parse arguments and dispatch to :class:`App`.
 
-    This function parses command-line arguments, initializes the application,
-    and dispatches execution to the appropriate command handler based on
-    the selected subcommand.
+    This function builds the argument parser with :func:`build_parser`, parses
+    the provided ``argv`` (a list of strings or ``None`` to read from
+    ``sys.argv``), creates an :class:`App` instance and executes the selected
+    command. Side effects include printing messages to stdout and writing an
+    output file when the ``export`` command is used.
 
     Args:
-        argv (list[str] | None, optional): A list of command-line arguments.
-        If None, arguments are read directly from sys.argv.
+        argv (list[str] | None, optional): List of command-line arguments to
+            parse (excluding the program name). If ``None`` the real command
+            line is used. Defaults to ``None``.
+
+    Returns:
+        None: this function does not return a value; it performs actions based
+        on the parsed subcommand.
+
+    Raises:
+        SystemExit: if argument parsing fails or if ``--help`` is requested
+            (raised by ``argparse``). Other exceptions raised by underlying
+            :class:`App` methods may propagate to the caller.
     """
+
     jubarte_parser = build_parser()
     parsed_user_args = jubarte_parser.parse_args(argv)
     app = App()
@@ -77,13 +95,8 @@ def main(argv=None):
         print(f"Exportado: {parsed_user_args.output}")
     elif parsed_user_args.cmd == "list":
         items = app.list_items(due_only=parsed_user_args.due_today)
-        for it, entry in items:
-            print(f"{it.id} | {it.title} | Próx: {entry.next_review.isoformat()}")
-    elif parsed_user_args.cmd == "review":
-        entry = app.review_item(parsed_user_args.item_id, parsed_user_args.result)
-        print(
-            f"Revisado: {parsed_user_args.item_id} → próxima: {entry.next_review.isoformat()}"
-        )
+        for it, review in items:
+            print(f"{it.id} | {it.title} | Próx: {review.review_date.isoformat()}")
     elif parsed_user_args.cmd == "version":
         from . import __version__
 
