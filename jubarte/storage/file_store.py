@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
-from jubarte.models import ReviewEntry, StudyItem
+from jubarte.models import ReviewItem, StudyItem
 
 from .memory_store import MemoryStore
 
@@ -12,7 +12,7 @@ class FileStore:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         if not self.path.exists():
-            self._write({"items": [], "entries": []})
+            self._write({"items": [], "reviews": []})
 
     def _read(self) -> Dict:
         with self.path.open("r", encoding="utf-8") as f:
@@ -35,27 +35,29 @@ class FileStore:
         d = self._read()
         return [StudyItem.from_dict(it) for it in d.get("items", [])]
 
-    def save_entry(self, entry: ReviewEntry) -> None:
+    def save_review(self, review: ReviewItem) -> None:
         d = self._read()
-        entries = [e for e in d.get("entries", []) if e.get("item_id") != entry.item_id]
-        entries.append(entry.to_dict())
-        d["entries"] = entries
+        reviews = [
+            r for r in d.get("reviews", []) if r.get("item_id") != review.item_id
+        ]
+        reviews.append(review.to_dict())
+        d["reviews"] = reviews
         self._write(d)
 
-    def load_entries(self) -> List[ReviewEntry]:
+    def load_reviews(self) -> List[ReviewItem]:
         d = self._read()
-        return [ReviewEntry.from_dict(e) for e in d.get("entries", [])]
+        return [ReviewItem.from_dict(r) for r in d.get("reviews", [])]
 
-    def load_entry_for_item(self, item_id: str) -> ReviewEntry | None:
-        for e in self.load_entries():
-            if e.item_id == item_id:
-                return e
+    def load_review_for_item(self, item_id: str) -> ReviewItem | None:
+        for r in self.load_reviews():
+            if r.item_id == item_id:
+                return r
         return None
 
     def as_memory(self) -> MemoryStore:
         ms = MemoryStore()
         for it in self.load_items():
             ms.save_item(it)
-        for e in self.load_entries():
-            ms.save_entry(e)
+        for r in self.load_reviews():
+            ms.save_review(r)
         return ms
