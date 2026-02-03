@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import List
 
-from jubarte.models import ReviewEntry, StudyItem
+from jubarte.models import ReviewItem, StudyItem
 
 
 class ICSExporter:
     def export(
-        self, entries: List[ReviewEntry], items: dict[str, StudyItem], path: str
+        self, reviews: List[ReviewItem], items: dict[str, StudyItem], path: str
     ) -> None:
         lines = [
             "BEGIN:VCALENDAR",
@@ -14,11 +14,11 @@ class ICSExporter:
             "PRODID:-//jubarte//EN",
         ]
 
-        for e in entries:
-            item = items.get(e.item_id)
-            uid = f"{e.item_id}-{int(e.next_review.timestamp())}@jubarte"
-            dtstart = e.next_review.strftime("%Y%m%dT%H%M%SZ")
-            summary = f"Revisão: {item.title if item else e.item_id}"
+        for r in reviews:
+            item = items.get(r.item_id)
+            uid = f"{r.item_id}-{int(r.review_date.timestamp())}@jubarte"
+            dtstart = r.review_date.strftime("%Y%m%dT%H%M%SZ")
+            summary = f"Revisão: {item.title if item else r.item_id}"
             description = item.notes if item else ""
             lines += [
                 "BEGIN:VEVENT",
