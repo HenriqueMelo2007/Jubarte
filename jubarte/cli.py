@@ -38,21 +38,19 @@ def build_parser():
     jubarte_parser = argparse.ArgumentParser(prog="jubarte")
     sub_parsers = jubarte_parser.add_subparsers(dest="cmd")
 
-    add = sub_parsers.add_parser("add", help="Adicionar novo tópico")
+    add = sub_parsers.add_parser("add", help="Add a new topic")
     add.add_argument("title")
     add.add_argument("--notes", "-n", default="")
 
-    sub_parsers.add_parser("interactive", help="Modo interativo (REPL)")
+    sub_parsers.add_parser("interactive", help="Interactive mode (REPL)")
 
-    exp = sub_parsers.add_parser("export", help="Exportar .ics")
-    exp.add_argument("output", help="arquivo.ics")
+    exp = sub_parsers.add_parser("export", help="Export to .ics file")
+    exp.add_argument("output", help="output .ics file")
 
-    list_p = sub_parsers.add_parser("list", help="Listar itens")
-    list_p.add_argument(
-        "--due-today", action="store_true", help="Apenas itens para hoje"
-    )
+    list_p = sub_parsers.add_parser("list", help="List items")
+    list_p.add_argument("--due-today", action="store_true", help="Only items due today")
 
-    sub_parsers.add_parser("version", help="Mostrar versão")
+    sub_parsers.add_parser("version", help="Show version")
 
     return jubarte_parser
 
@@ -87,16 +85,16 @@ def main(argv=None):
 
     if parsed_user_args.cmd == "add":
         item = app.add_item(parsed_user_args.title, parsed_user_args.notes)
-        print(f"Adicionado: {item.id} - {item.title}")
+        print(f"Added: {item.id} - {item.title}")
     elif parsed_user_args.cmd == "interactive":
         app.run_interactive()
     elif parsed_user_args.cmd == "export":
         app.export_ics(parsed_user_args.output)
-        print(f"Exportado: {parsed_user_args.output}")
+        print(f"Exported: {parsed_user_args.output}")
     elif parsed_user_args.cmd == "list":
         items = app.list_items(due_only=parsed_user_args.due_today)
         for it, review in items:
-            print(f"{it.id} | {it.title} | Próx: {review.review_date.isoformat()}")
+            print(f"{it.id} | {it.title} | Next: {review.review_date.isoformat()}")
     elif parsed_user_args.cmd == "version":
         from . import __version__
 
