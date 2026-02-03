@@ -37,9 +37,7 @@ class FileStore:
 
     def save_review(self, review: ReviewItem) -> None:
         d = self._read()
-        reviews = [
-            r for r in d.get("reviews", []) if r.get("item_id") != review.item_id
-        ]
+        reviews = d.get("reviews", [])
         reviews.append(review.to_dict())
         d["reviews"] = reviews
         self._write(d)

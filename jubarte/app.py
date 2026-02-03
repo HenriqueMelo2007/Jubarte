@@ -16,8 +16,9 @@ class App:
     def add_item(self, title: str, notes: str = "") -> StudyItem:
         item = new_item(title, notes)
         self.store.save_item(item)
-        review = self.scheduler.generate_initial(item)
-        self.store.save_review(review)
+        reviews = self.scheduler.generate_initial(item)
+        for review in reviews:
+            self.store.save_review(review)
         return item
 
     def list_items(self, due_only: bool = False) -> List[Tuple[StudyItem, ReviewItem]]:
