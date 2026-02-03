@@ -1,35 +1,57 @@
+"""Interactive REPL for the Jubarte CLI.
+
+This module exposes a single function, ``interactive_loop(app)`` which runs a
+small read–eval–print loop allowing users to interact with a running ``App``
+instance. The function performs input parsing and delegates actions to the
+provided ``app`` object. The ``app`` is expected to implement the following
+methods used by the loop:
+
+- ``add_item(title: str) -> StudyItem``
+- ``list_items() -> Iterable[Tuple[StudyItem, ReviewItem]]``
+- ``review_item(item_id: str, result: str) -> ReviewItem``
+- ``export_ics(path: str) -> None``
+
+All messages and prompts are written to stdout; this function is intended for
+use in a terminal and has side effects (printing, reading stdin, and calling
+``app`` methods).
 """
-Interactive command-line loop for the Jubarte application.
 
-This module provides a simple REPL (Read–Eval–Print Loop) that allows
-users to interact with the application without restarting the program.
-Supported commands include adding items, listing reviews, recording
-review results, exporting calendars, and exiting the session.
-"""
-
-from typing import List
+from typing import Any, List
 
 
-def interactive_loop(app) -> None:
-    """
-    Run the interactive (REPL) mode of the Jubarte application.
+def interactive_loop(app: Any) -> None:
+    """Start a simple interactive loop that accepts user commands.
 
-    This function continuously reads user input from the terminal,
-    parses commands, and delegates actions to the provided application
-    instance. The loop exits when the user types `exit` or triggers
-    an interrupt signal (Ctrl+C / Ctrl+D).
+    The loop reads lines from standard input, splits them into a command and
+    arguments, and executes one of the supported commands by calling the
+    corresponding method on ``app``. When the user sends EOF (Ctrl+D) or
+    interrupts (Ctrl+C) the loop exits gracefully.
+
+    Supported commands:
+      - ``help``: show available commands.
+      - ``add <title>``: create a new study item with the given title.
+      - ``list``: list all items and their next review date.
+      - ``review <id> <again|hard|good|easy>``: register a review result for an
+        item and print the next scheduled review date.
+      - ``export <file.ics>``: export items to an iCalendar file.
+      - ``exit``: exit the interactive loop.
 
     Args:
-        app: An application instance that implements the core Jubarte
-        operations such as adding items, listing reviews, exporting
-        calendar files, and recording review results.
+        app: An application object implementing the methods described in the
+            module docstring. The function does not validate the object's
+            type at runtime; it will raise AttributeError if required methods
+            are missing.
+
+    Returns:
+        None: The function runs until the user exits and does not return a
+        value.
     """
-    print("Jubarte — modo interativo. Digite 'help' para comandos.")
+    print("Jubarte — interactive mode. Type 'help' for commands.")
     while True:
         try:
             line = input("jubarte> ").strip()
         except (EOFError, KeyboardInterrupt):
-            print("\nSaindo.")
+            print("\nExiting.")
             break
         if not line:
             continue
@@ -39,35 +61,35 @@ def interactive_loop(app) -> None:
 
         if cmd == "help":
             print(
-                "comandos: add <title>, list, review <id> <result>, export <file>, exit"
+                "commands: add <title>, list, review <id> <result>, export <file>, exit"
             )
         elif cmd == "exit":
             break
         elif cmd == "add":
             title = " ".join(args)
             if not title:
-                print("Título obrigatório")
+                print("Title is required")
                 continue
             item = app.add_item(title)
-            print(f"Adicionado: {item.id}")
+            print(f"Added: {item.id}")
         elif cmd == "list":
-            for it, entry in app.list_items():
-                print(f"{it.id} | {it.title} | Próx: {entry.next_review.isoformat()}")
+            for it, review in app.list_items():
+                print(f"{it.id} | {it.title} | Next: {review.review_date.isoformat()}")
         elif cmd == "review":
             if len(args) < 2:
-                print("Uso: review <id> <again|hard|good|easy>")
+                print("Usage: review <id> <again|hard|good|easy>")
                 continue
             item_id, result = args[0], args[1]
             try:
-                entry = app.review_item(item_id, result)
-                print(f"Próxima: {entry.next_review.isoformat()}")
+                review = app.review_item(item_id, result)
+                print(f"Next: {review.review_date.isoformat()}")
             except Exception as e:
-                print("Erro:", e)
+                print("Error:", e)
         elif cmd == "export":
             if len(args) < 1:
-                print("Uso: export <arquivo.ics>")
+                print("Usage: export <file.ics>")
                 continue
             app.export_ics(args[0])
-            print("Exportado.")
+            print("Exported.")
         else:
-            print("Comando desconhecido. Digite 'help'.")
+            print("Unknown command. Type 'help'.")
