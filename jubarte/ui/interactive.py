@@ -31,8 +31,6 @@ def interactive_loop(app: Any) -> None:
       - ``help``: show available commands.
       - ``add <title>``: create a new study item with the given title.
       - ``list``: list all items and their next review date.
-      - ``review <id> <again|hard|good|easy>``: register a review result for an
-        item and print the next scheduled review date.
       - ``export <file.ics>``: export items to an iCalendar file.
       - ``exit``: exit the interactive loop.
 
@@ -69,20 +67,12 @@ def interactive_loop(app: Any) -> None:
                 print("Title is required")
                 continue
             item = app.add_item(title)
-            print(f"Added: {item.id}")
+            print(f"Added: {item.title}")
         elif cmd == "list":
             for it, review in app.list_items():
-                print(f"{it.id} | {it.title} | Next: {review.review_date.isoformat()}")
-        elif cmd == "review":
-            if len(args) < 2:
-                print("Usage: review <id> <again|hard|good|easy>")
-                continue
-            item_id, result = args[0], args[1]
-            try:
-                review = app.review_item(item_id, result)
-                print(f"Next: {review.review_date.isoformat()}")
-            except Exception as e:
-                print("Error:", e)
+                print(
+                    f"{it.title} | Review date: {review.review_date.isoformat()[:10]}"
+                )
         elif cmd == "export":
             if len(args) < 1:
                 print("Usage: export <file.ics>")
