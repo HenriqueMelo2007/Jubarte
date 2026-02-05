@@ -85,7 +85,7 @@ def main(argv=None):
 
     if parsed_user_args.cmd == "add":
         item = app.add_item(parsed_user_args.title, parsed_user_args.notes)
-        print(f"Added: {item.id} - {item.title}")
+        print(f"Added: {item.title}")
     elif parsed_user_args.cmd == "interactive":
         app.run_interactive()
     elif parsed_user_args.cmd == "export":
