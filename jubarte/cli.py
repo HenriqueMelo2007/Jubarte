@@ -94,7 +94,7 @@ def main(argv=None):
     elif parsed_user_args.cmd == "list":
         items = app.list_items(due_only=parsed_user_args.due_today)
         for it, review in items:
-            print(f"{it.id} | {it.title} | Next: {review.review_date.isoformat()}")
+            print(f"{it.title} | Review date: {review.review_date.isoformat()}")
     elif parsed_user_args.cmd == "version":
         from . import __version__
 

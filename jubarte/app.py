@@ -23,18 +23,19 @@ class App:
 
     def list_items(self, due_only: bool = False) -> List[Tuple[StudyItem, ReviewItem]]:
         items = {it.id: it for it in self.store.load_items()}
-        reviews = {r.item_id: r for r in self.store.load_reviews()}
+        reviews = self.store.load_reviews()
         res = []
         from datetime import datetime, timezone
 
         now = datetime.now(timezone.utc)
-        for item_id, item in items.items():
-            review = reviews.get(item_id)
-            if not review:
-                continue
+        for review in reviews:
+            item_id, item = next(
+                (k, v) for k, v in items.items() if k == review.item_id
+            )
             if due_only and review.review_date.date() != now.date():
                 continue
             res.append((item, review))
+
         return res
 
     def export_ics(self, path: str) -> None:
