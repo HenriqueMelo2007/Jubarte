@@ -52,6 +52,29 @@ class FileStore:
                 return r
         return None
 
+    def clear(self) -> None:
+        self._write({"items": [], "reviews": []})
+
+    def remove_reviews_for_item(self, item_id: str) -> Dict[str, List[dict]]:
+        d = self._read()
+        reviews = [r for r in d.get("reviews", []) if r.get("item_id") != item_id]
+        d["reviews"] = reviews
+        self._write(d)
+        print(d)
+        return d
+
+    def remove_item_by_title(self, title: str) -> None:
+        d = self._read()
+        item_id = ""
+        for item in d["items"]:
+            if item["title"] == title:
+                item_id = item["id"]
+                break
+        d = self.remove_reviews_for_item(item_id=item_id)
+        items = [it for it in d.get("items", []) if it.get("title") != title]
+        d["items"] = items
+        self._write(d)
+
     def as_memory(self) -> MemoryStore:
         ms = MemoryStore()
         for it in self.load_items():

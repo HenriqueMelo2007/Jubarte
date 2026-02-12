@@ -39,8 +39,8 @@ def build_parser():
     sub_parsers = jubarte_parser.add_subparsers(dest="cmd")
 
     add = sub_parsers.add_parser("add", help="Add a new topic")
-    add.add_argument("title")
-    add.add_argument("--notes", "-n", default="")
+    add.add_argument("title", help="Title of the topic to add")
+    add.add_argument("--notes", "-n", default="", help="Optional notes for the topic")
 
     sub_parsers.add_parser("interactive", help="Interactive mode (REPL)")
 
@@ -49,6 +49,11 @@ def build_parser():
 
     list_p = sub_parsers.add_parser("list", help="List items")
     list_p.add_argument("--due-today", action="store_true", help="Only items due today")
+
+    sub_parsers.add_parser("clear", help="Clear all items and reviews")
+
+    remove = sub_parsers.add_parser("remove", help="Remove an item by title")
+    remove.add_argument("title", help="Title of the item to remove")
 
     sub_parsers.add_parser("version", help="Show version")
 
@@ -99,5 +104,16 @@ def main(argv=None):
         from . import __version__
 
         print(__version__)
+    elif parsed_user_args.cmd == "clear":
+        app.clear()
+    elif parsed_user_args.cmd == "remove":
+        items = app.list_items()
+        to_remove = [it for it, _ in items if it.title == parsed_user_args.title]
+        if not to_remove:
+            print(f"No item found with title: {parsed_user_args.title}")
+        else:
+            for it in to_remove:
+                app.remove_item(it.title)
+
     else:
         jubarte_parser.print_help()

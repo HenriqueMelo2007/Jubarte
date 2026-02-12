@@ -45,3 +45,9 @@ class App:
 
     def run_interactive(self) -> None:
         interactive_loop(self)
+
+    def clear(self) -> None:
+        self.store.clear()
+
+    def remove_item(self, title: str) -> None:
+        self.store.remove_item_by_title(title)
