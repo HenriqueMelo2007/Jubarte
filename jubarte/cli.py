@@ -4,7 +4,7 @@ This module provides a command-line interface for the Jubarte application.
 It exposes two helpers:
 
 - ``build_parser()`` — constructs and returns an ``argparse.ArgumentParser``
-  configured with the supported subcommands (add, interactive, export, list,
+  configured with the supported subcommands (add, interactive, export, list, clear, remove, and
   version).
 - ``main(argv=None)`` — program entry point that parses the provided
   arguments, instantiates :class:`~.app.App` and dispatches the chosen
@@ -27,6 +27,8 @@ def build_parser():
       notes field.
     - ``interactive``: start the interactive REPL mode.
     - ``export <output>``: export items to an iCalendar (``.ics``) file.
+    - ``clear``: clear all stored items and reviews.
+    - ``remove <title>``: remove an item by its title.
     - ``list [--due-today]``: list stored items; ``--due-today`` limits results
       to items due today.
     - ``version``: print the package version and exit.

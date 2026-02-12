@@ -9,7 +9,9 @@ methods used by the loop:
 - ``add_item(title: str) -> StudyItem``
 - ``list_items() -> Iterable[Tuple[StudyItem, ReviewItem]]``
 - ``review_item(item_id: str, result: str) -> ReviewItem``
-- ``export_ics(path: str) -> None``
+- ``export_ics(path: str) -> None``]
+- ``clear() -> None``
+- ``remove_item(title: str) -> None``
 
 All messages and prompts are written to stdout; this function is intended for
 use in a terminal and has side effects (printing, reading stdin, and calling
@@ -33,6 +35,8 @@ def interactive_loop(app: Any) -> None:
       - ``list``: list all items and their next review date.
       - ``export <file.ics>``: export items to an iCalendar file.
       - ``exit``: exit the interactive loop.
+      - ``clear``: clear all items and reviews.
+      - ``remove <title>``: remove an item by its title.
 
     Args:
         app: An application object implementing the methods described in the
@@ -79,5 +83,15 @@ def interactive_loop(app: Any) -> None:
                 continue
             app.export_ics(args[0])
             print("Exported.")
+        elif cmd == "clear":
+            app.clear()
+            print("Cleared all items and reviews.")
+        elif cmd == "remove":
+            if len(args) < 1:
+                print("Usage: remove <title>")
+                continue
+            title = " ".join(args)
+            app.remove_item(title)
+            print(f"Removed item with title: {title}")
         else:
             print("Unknown command. Type 'help'.")

@@ -1,3 +1,35 @@
+"""
+gcommit — Automated Git Commit Helper with Pre-commit Enforcement
+
+This script automates a safe Git commit workflow by ensuring that
+pre-commit hooks run repeatedly until the repository is clean before
+creating a commit.
+
+Usage:
+    poetry run gcommit "type: commit message" [--push]
+
+Arguments:
+    "type: commit message"
+        The commit message to use when creating the commit.
+
+Options:
+    --push
+        If provided, the script will run `git push` after committing.
+
+Workflow:
+    1. Runs `pre-commit run --all-files` up to 3 times (default)
+       to allow auto-fixes to stabilize.
+    2. Aborts if pre-commit keeps modifying files.
+    3. Stages all changes (`git add .`).
+    4. Creates a commit with the provided message.
+    5. Optionally pushes to the current remote branch.
+
+Requirements:
+    - git
+    - pre-commit installed and configured in the repository
+    - poetry
+"""
+
 import subprocess
 import sys
 
