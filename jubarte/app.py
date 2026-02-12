@@ -69,6 +69,10 @@ class App:
             The newly created StudyItem instance.
         """
         item = new_item(title, notes)
+        items = {it.id: it for it in self.store.load_items()}
+        for it in items.values():
+            if it.title == title:
+                raise ValueError(f"An item with title '{title}' already exists.")
         self.store.save_item(item)
         reviews = self.scheduler.generate_initial(item)
         for review in reviews:

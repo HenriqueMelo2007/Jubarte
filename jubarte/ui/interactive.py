@@ -62,7 +62,9 @@ def interactive_loop(app: Any) -> None:
         args = user_input[1:]
 
         if cmd == "help":
-            print("commands: add <title>, list, export <file>, exit")
+            print(
+                "commands: add <title>, list, export <file>, clear, remove <title>, exit"
+            )
         elif cmd == "exit":
             break
         elif cmd == "add":

@@ -108,6 +108,7 @@ def main(argv=None):
         print(__version__)
     elif parsed_user_args.cmd == "clear":
         app.clear()
+        print("Cleared all items and reviews.")
     elif parsed_user_args.cmd == "remove":
         items = app.list_items()
         to_remove = [it for it, _ in items if it.title == parsed_user_args.title]
@@ -116,6 +117,7 @@ def main(argv=None):
         else:
             for it in to_remove:
                 app.remove_item(it.title)
+            print(f"Removed item(s) with title: {parsed_user_args.title}")
 
     else:
         jubarte_parser.print_help()

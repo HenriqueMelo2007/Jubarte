@@ -168,7 +168,6 @@ class FileStore:
         reviews = [r for r in d.get("reviews", []) if r.get("item_id") != item_id]
         d["reviews"] = reviews
         self._write(d)
-        print(d)
         return d
 
     def remove_item_by_title(self, title: str) -> None:
