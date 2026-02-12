@@ -75,16 +75,19 @@ def interactive_loop(app: Any) -> None:
             item = app.add_item(title)
             print(f"Added: {item.title}")
         elif cmd == "list":
-            for it, review in app.list_items():
-                print(
-                    f"{it.title} | Review date: {review.review_date.isoformat()[:10]}"
-                )
+            items = app.list_items()
+            if not items:
+                print("No items found.")
+            else:
+                for it, review in items:
+                    print(
+                        f"{it.title} | Review date: {review.review_date.isoformat()[:10]}"
+                    )
         elif cmd == "export":
             if len(args) < 1:
                 print("Usage: export <file.ics>")
                 continue
             app.export_ics(args[0])
-            print("Exported.")
         elif cmd == "clear":
             app.clear()
             print("Cleared all items and reviews.")

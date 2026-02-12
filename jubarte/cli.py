@@ -97,11 +97,15 @@ def main(argv=None):
         app.run_interactive()
     elif parsed_user_args.cmd == "export":
         app.export_ics(parsed_user_args.output)
-        print(f"Exported: {parsed_user_args.output}")
     elif parsed_user_args.cmd == "list":
         items = app.list_items(due_only=parsed_user_args.due_today)
-        for it, review in items:
-            print(f"{it.title} | Review date: {review.review_date.isoformat()[:10]}")
+        if items:
+            for it, review in items:
+                print(
+                    f"{it.title} | Review date: {review.review_date.isoformat()[:10]}"
+                )
+        else:
+            print("No items found.")
     elif parsed_user_args.cmd == "version":
         from . import __version__
 

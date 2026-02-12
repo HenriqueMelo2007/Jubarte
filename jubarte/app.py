@@ -111,8 +111,12 @@ class App:
             path: Destination file path for the generated ICS file.
         """
         reviews = self.store.load_reviews()
-        items = {it.id: it for it in self.store.load_items()}
-        self.exporter.export(reviews, items, path)
+        if reviews:
+            items = {it.id: it for it in self.store.load_items()}
+            self.exporter.export(reviews, items, path)
+            print(f"Exported: {path}")
+        else:
+            print("No reviews to export.")
 
     def run_interactive(self) -> None:
         """Start the interactive command-line interface."""
