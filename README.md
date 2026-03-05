@@ -10,8 +10,6 @@ Python CLI tool for scheduling spaced reviews and exporting a calendar `.ics` fi
 
 **Jubarte** is a command-line utility that allows users to register study topics and generate an initial review plan based on spaced-repetition intervals. The calculated dates can be exported as an iCalendar (`.ics`) file for import into calendar applications.  
 
-The business logic (item creation, scheduling, persistence, and export) is organized in an application layer (`App`) and modular components (store, scheduler, exporter) that can be replaced or extended.
-
 ## Features
 
 - Add a new study topic (title + optional notes).
